@@ -1,0 +1,8 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"types": ["node"] // Las pruebas de interfaz corren en Node, con Playwright, y no dentro del Worker: por eso usan los tipos de Node y no los de vitest-pool-workers, como las demás pruebas.
+	},
+	"include": ["./**/*.ts"],
+	"exclude": [] // Anula el exclude heredado del tsconfig.json principal, que deja fuera la carpeta pruebas y con ella todos estos archivos.
+}

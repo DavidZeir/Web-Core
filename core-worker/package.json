@@ -1,0 +1,45 @@
+{
+	"name": "core-worker",
+	"version": "0.0.0",
+	"private": true,
+	"engines": {
+		"node": "^22.18.0 || >=24.0.0"
+	},
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"typecheck:pruebas": "tsc -p pruebas/tsconfig.json --noEmit && tsc -p pruebas/interfaz/tsconfig.json --noEmit",
+		"verificador": "node ../Programas/verificador.mjs",
+		"deploy": "npm run typecheck && npm run lint && npm run reglas && wrangler deploy",
+		"dev": "concurrently \"npm run dev:worker\" \"npm run dev:sync\"",
+		"use-scribe": "powershell -WindowStyle Hidden -Command \"$ruta = Resolve-Path '..\\USE Scribe\\USE Scribe.exe'; $carpeta = Split-Path $ruta; Start-Process -FilePath $ruta -WorkingDirectory $carpeta\"",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types",
+		"lint": "eslint src/**/*.ts src-ui/**/*.ts pruebas/**/*.ts",
+		"reglas": "node ../Programas/reglas-plantilla.mts && node ../Programas/reglas-diseno.mts",
+		"build:css": "esbuild static/css/*.css --minify --sourcemap --outdir=static/min",
+		"build:js": "esbuild src-ui/**/*.ts --bundle --minify --sourcemap --outdir=static/min --platform=browser",
+		"build-assets": "npm run build:css && npm run build:js",
+		"dev:worker": "wrangler dev",
+		"dev:sync": "browser-sync start --proxy http://127.0.0.1:8787 --files \"static/min/**/*.css, static/min/**/*.js, static/html/**/*.html\" --no-open --no-notify --no-inject-changes --port 3000"
+	},
+	"devDependencies": {
+		"@axe-core/playwright": "^4.14.0",
+		"@cloudflare/vitest-pool-workers": "^0.16.4",
+		"@playwright/test": "^1.64.1",
+		"@stylistic/eslint-plugin": "^4.4.1",
+		"@types/node": "^25.5.0",
+		"@typescript-eslint/eslint-plugin": "^8.58.0",
+		"@typescript-eslint/parser": "^8.58.0",
+		"browser-sync": "^3.0.4",
+		"concurrently": "^9.2.1",
+		"esbuild": "^0.28.0",
+		"eslint": "^10.1.0",
+		"typescript": "^5.5.2",
+		"vitest": "^4.1.6",
+		"wrangler": "^4.80.0"
+	},
+	"dependencies": {
+		"valibot": "^1.3.1"
+	}
+}

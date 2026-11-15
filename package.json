@@ -1,0 +1,9 @@
+{
+	"name": "web-core",
+	"private": true,
+	"scripts": {
+		"verificador": "npm --prefix core-worker run verificador",
+		"alistar": "node Programas/alistar.mjs",
+		"iniciar": "node Programas/iniciar.mjs"
+	}
+}

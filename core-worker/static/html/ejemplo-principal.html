@@ -1,0 +1,235 @@
+<style>
+
+	@layer semantica_local {
+
+		.principal { /* La portada de ejemplo de Web Core, un producto pequeño que usa los colores de la marca como los usaría un sitio real. Pertenece a la capa local porque solo existe en esta página. */
+			display: grid;
+			gap: clamp(var(--espacio-2xl), 5vw, var(--espacio-3xl)); /* El espacio entre secciones: espacio-2xl en el teléfono y espacio-3xl en el escritorio. */
+			grid-template-columns: minmax(0, 1fr);
+			margin-inline: auto;
+			max-width: var(--ancho-contenido);
+			text-align: start;
+		}
+
+		.principal-portada { /* La presentación del producto, con el color secundario. Entre el nombre y el lema va el espacio de un título y su texto. Pertenece a la capa local porque solo existe en esta página. */
+			align-items: flex-start;
+			background: var(--color-secundario);
+			border-radius: var(--radio-l);
+			color: var(--color-sobre-secundario);
+			display: flex;
+			flex-direction: column;
+			gap: var(--espacio-s);
+			padding: clamp(var(--espacio-l), 5vw, var(--espacio-3xl));
+		}
+
+		.principal-cabecera { /* El nombre del programa, con el tamaño más grande de la escala, y a su lado el aviso de que es un ejemplo. Pertenece a la capa local porque solo existe en esta página. */
+			align-items: center;
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--espacio-xs) var(--espacio-m);
+
+			& h1 {
+				color: var(--color-sobre-secundario);
+				font-size: var(--texto-3xl);
+				margin-bottom: 0; /* Sin el espacio de un título y su texto, porque el nombre va en una fila con la etiqueta, y el espacio hasta el lema lo pone el gap de la portada. */
+
+				&::first-letter { /* El 3 del nombre sube hasta la línea base, porque en Georgia los números son antiguos y el 3 baja 0.1875em por debajo de ella. Así su pie queda alineado con el del ra y con el del resto del nombre. Va con vertical-align, que es lo que acepta la primera letra para moverse, y no con un espacio. Si cambia la fuente destacada, este valor se vuelve a medir. Este ajuste se hace para demostrar que se pueden hacer ajustes finos sin que npm run reglas los rechace. */
+					vertical-align: 0.1875em;
+				}
+
+			}
+
+		}
+
+		.principal-lema { /* La frase que explica el programa, más pequeña que su nombre. Pertenece a la capa local porque solo existe en esta página. */
+			font-size: var(--texto-xl);
+			margin-bottom: 0; /* Sin el espacio entre párrafos, porque en la portada los espacios los ponen su gap y el margen de la pregunta. */
+		}
+
+		.principal-preguntar { /* El cuadro de la pregunta y su botón en una fila, que se parte en el teléfono. Pertenece a la capa local porque solo existe en esta página. */
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--espacio-s);
+			margin-top: var(--espacio-m);
+			width: 100%;
+
+			& input {
+				flex: 1 1 16rem;
+				min-width: 0;
+			}
+
+		}
+
+		.principal-respuestas { /* Las respuestas de las tres IAs en tantas columnas como quepan, y en una sola en el teléfono. Pertenece a la capa local porque solo existe en esta página. */
+			display: grid;
+			gap: var(--espacio-m);
+			grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.principal-respuesta { /* La respuesta de cada IA sobre el fondo de la página, con su borde. El botón va abajo para que queden alineados aunque unos textos sean más largos. Pertenece a la capa local porque solo existe en esta página. */
+			align-items: flex-start;
+			background: var(--color-fondo);
+			border: var(--borde-s) solid var(--color-borde);
+			border-radius: var(--radio-l);
+			display: flex;
+			flex-direction: column;
+			gap: var(--espacio-2xs);
+			padding: var(--espacio-l);
+
+			& h2 {
+				font-size: var(--texto-l);
+				margin-bottom: var(--espacio-2xs); /* Con el gap de la tarjeta suma espacio-s, el espacio entre un título y su texto. */
+			}
+
+			& p {
+				margin-bottom: 0; /* Las líneas de la tarjeta se separan con su gap, y no con el espacio entre párrafos. */
+			}
+
+			& button {
+				margin-top: auto;
+			}
+
+		}
+
+		.principal-respuesta-destacada { /* Destaca la respuesta que coincide con el veredicto, con el fondo y el borde de éxito. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-exito-fondo);
+			border-color: var(--color-exito-borde);
+		}
+
+		.principal-etiqueta { /* La forma común de las etiquetas que dicen qué IA respondió. Pertenece a la capa local porque solo existe en esta página. */
+			border-radius: var(--radio-s);
+			font-size: var(--texto-s);
+			font-weight: var(--peso-negrita);
+			padding: 0.1rem var(--espacio-xs);
+		}
+
+		.principal-etiqueta-primario { /* La etiqueta de la primera IA, con los tonos del primario. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-primario-luz);
+			color: var(--color-primario-sombra);
+		}
+
+		.principal-etiqueta-secundario { /* La etiqueta de la segunda IA, con los tonos del secundario. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-secundario-luz);
+			color: var(--color-secundario-sombra);
+		}
+
+		.principal-etiqueta-terciario { /* La etiqueta de la tercera IA, con los tonos del terciario. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-terciario-luz);
+			color: var(--color-terciario-sombra);
+		}
+
+		.principal-etiqueta-alerta { /* El aviso de que el ejemplo no funciona, con el fondo, el borde y el color de alerta. Su alto es el tamaño de letra del título, para que los dos se vean parejos. Pertenece a la capa local porque solo existe en esta página. */
+			align-items: center;
+			background: var(--color-alerta-fondo);
+			border: var(--borde-s) solid var(--color-alerta-borde);
+			color: var(--color-alerta);
+			display: inline-flex;
+			font-size: var(--texto-l);
+			height: var(--texto-3xl);
+			padding-inline: var(--espacio-m);
+		}
+
+		.principal-detalle { /* La razón corta de cada respuesta. Pertenece a la capa local porque solo existe en esta página. */
+			color: var(--color-texto-suave);
+		}
+
+		.principal-confianza { /* Qué tan segura está cada IA, con el color primario porque es lo primero que se compara. Pertenece a la capa local porque solo existe en esta página. */
+			color: var(--color-primario);
+			font-size: var(--texto-l);
+			font-weight: var(--peso-negrita);
+
+			[data-tema='alternativo'] & {
+				color: var(--color-primario-luz);
+			}
+
+		}
+
+		.principal-btn-neutro { /* La acción de la respuesta en desacuerdo, sin color de marca para no invitar a seguirla. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-fondo-sombra);
+			color: var(--color-texto-fuerte);
+
+			&:hover {
+				background: var(--color-borde);
+			}
+
+		}
+
+		.principal-veredicto { /* El veredicto, que es lo más importante de la respuesta, como un mensaje informativo grande, con su título, su fondo y su borde. Pertenece a la capa local porque solo existe en esta página. */
+			background: var(--color-informacion-fondo);
+			border: var(--borde-s) solid var(--color-informacion-borde);
+			border-radius: var(--radio-l);
+			color: var(--color-informacion);
+			font-size: var(--texto-l);
+			padding: var(--espacio-2xl);
+
+			& h2 {
+				color: inherit;
+			}
+
+		}
+
+		.principal-nota { /* La advertencia de que la IA puede equivocarse, discreta y por fuera del veredicto, con el tamaño y el texto más suaves. Pertenece a la capa local porque solo existe en esta página. */
+			color: var(--color-texto-suave);
+			font-size: var(--texto-xs);
+		}
+
+	}
+
+</style>
+
+<div class="principal">
+
+	<section class="principal-portada">
+		<div class="principal-cabecera">
+			<h1>{{ejemplo-principal-nombre}}</h1>
+			<span class="principal-etiqueta principal-etiqueta-alerta">{{ejemplo-principal-no-funcional}}</span>
+		</div>
+		<p class="principal-lema">{{ejemplo-principal-lema}}</p>
+		<div class="principal-preguntar">
+			<input type="text" value="{{ejemplo-principal-pregunta}}" aria-label="{{ejemplo-principal-accion}}">
+			<button type="button">{{ejemplo-principal-accion}}</button>
+		</div>
+	</section>
+
+	<ul class="principal-respuestas">
+
+		<li class="principal-respuesta principal-respuesta-destacada">
+			<span class="principal-etiqueta principal-etiqueta-primario">{{ejemplo-principal-ia-uno}}</span>
+			<h2>{{ejemplo-principal-uno-respuesta}}</h2>
+			<p class="principal-detalle">{{ejemplo-principal-uno-razon}} <a href="#">{{ejemplo-principal-copiar}}</a></p>
+			<p class="principal-confianza">{{ejemplo-principal-uno-confianza}}</p>
+			<p style="color: var(--color-exito);">{{ejemplo-principal-de-acuerdo}}</p>
+			<button type="button">{{ejemplo-principal-leer-todo}}</button>
+		</li>
+
+		<li class="principal-respuesta">
+			<span class="principal-etiqueta principal-etiqueta-secundario">{{ejemplo-principal-ia-dos}}</span>
+			<h2>{{ejemplo-principal-dos-respuesta}}</h2>
+			<p class="principal-detalle">{{ejemplo-principal-dos-razon}} <a href="#">{{ejemplo-principal-copiar}}</a></p>
+			<p class="principal-confianza">{{ejemplo-principal-dos-confianza}}</p>
+			<p style="color: var(--color-alerta);">{{ejemplo-principal-con-dudas}}</p>
+			<button type="button">{{ejemplo-principal-leer-todo}}</button>
+		</li>
+
+		<li class="principal-respuesta">
+			<span class="principal-etiqueta principal-etiqueta-terciario">{{ejemplo-principal-ia-tres}}</span>
+			<h2>{{ejemplo-principal-tres-respuesta}}</h2>
+			<p class="principal-detalle">{{ejemplo-principal-tres-razon}} <a href="#">{{ejemplo-principal-copiar}}</a></p>
+			<p class="principal-confianza">{{ejemplo-principal-tres-confianza}}</p>
+			<p style="color: var(--color-error);">{{ejemplo-principal-en-desacuerdo}}</p>
+			<button class="principal-btn-neutro" type="button">{{ejemplo-principal-leer-todo}}</button>
+		</li>
+
+	</ul>
+
+	<section class="principal-veredicto">
+		<h2>{{ejemplo-principal-veredicto-titulo}}</h2>
+		<p>{{ejemplo-principal-veredicto}}</p>
+	</section>
+
+	<p class="principal-nota">{{ejemplo-principal-nota}}</p>
+
+</div>

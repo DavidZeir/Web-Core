@@ -1,0 +1,9 @@
+root = true
+
+# Los editores, como Visual Studio, escriben en LF lo que se edita a mano, igual que el .gitattributes en git.
+[*]
+end_of_line = lf
+
+# Los .bat y los .cmd van en CRLF, como en el .gitattributes.
+[*.{bat,cmd}]
+end_of_line = crlf

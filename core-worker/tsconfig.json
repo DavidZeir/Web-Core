@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "es2024", // Define la versión de JavaScript que TypeScript asume al revisar y emitir el código.
+		"lib": [ "es2024", "dom", "dom.iterable" ], // Tipos de JS moderno y APIs web como fetch, Request, Response, Headers e iterables.
+		// "jsx": "react-jsx", // Activar solo si el proyecto usa React.
+		"module": "es2022", // Especifica el formato de módulos que genera la compilación.
+		"moduleResolution": "bundler", // Define cómo TypeScript resuelve archivos desde cada especificador de módulo.
+		"resolveJsonModule": true, // Permite importar archivos .json como parte del proyecto.
+		"allowJs": false, // No permite incluir archivos JavaScript porque todo debe ser TypeScript por consistencia. No afecta JavaScript en <script> ni en línea.
+		// "checkJs": true, // Activar junto con allowJs para revisar errores de tipos en archivos JavaScript.
+		"noEmit": true, // Evita generar archivos de salida durante la compilación.
+		"isolatedModules": true, // Garantiza que cada archivo pueda transpilarse de forma aislada.
+		"allowSyntheticDefaultImports": true, // Permite importar un valor predeterminado sintético desde módulos sin exportación default real.
+		"forceConsistentCasingInFileNames": true, // Obliga a respetar el uso consistente de mayúsculas y minúsculas en rutas e imports.
+		"strict": true, // Esencial para el control de tipos. Si no está activado, TypeScript terminaría como un 'JavaScript'.
+		"noImplicitAny": true, // Para que no use any implícitos.
+		"strictNullChecks": true, // Para que una variable no permita asignar null si no se define aceptando null.
+		"noImplicitReturns": true, // Para que se obligue que todas las funciones devuelvan un valor.
+		"noUnusedLocals": true, // Hace fallar el Verificador si queda una variable, una función local o un import sin usar, para que no se acumule código 'por si acaso'.
+		"noUnusedParameters": true, // Hace fallar el Verificador si un parámetro no se usa. Si la firma obliga a recibirlo, como en los manejadores de Cloudflare o de los eventos del navegador, su nombre empieza con _.
+		"skipLibCheck": true, // Omite la revisión de tipos en todos los archivos .d.ts.
+		"types": [ "./worker-configuration.d.ts" ] // Agregar "node" si se requiere para el proyecto.
+	},
+	"exclude": [ "pruebas" ],
+	"include": [ "worker-configuration.d.ts", "src/**/*.ts", "src-ui/**/*.ts" ]
+}

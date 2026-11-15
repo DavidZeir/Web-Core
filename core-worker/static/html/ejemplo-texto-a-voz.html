@@ -1,0 +1,402 @@
+<style>
+
+	@layer semantica_local {
+
+		.ejemplo-texto-voz { /* Define la pagina local de prueba con el mismo ancho de lectura de ejemplo ia. */
+			box-sizing: border-box;
+			font-family: var(--fuente-monoespaciada);
+			margin: 0 auto;
+			max-width: var(--ancho-contenido);
+			padding: var(--espacio-xl) var(--espacio-2xl);
+			text-align: start;
+		}
+
+		.ejemplo-texto-voz-titulo { /* Centra el titulo como entrada visual de la herramienta de prueba. */
+			font-family: inherit;
+			font-size: var(--texto-2xl);
+			line-height: var(--interlineado-s);
+			margin: 0 0 clamp(var(--espacio-2xl), 5vw, var(--espacio-3xl)); /* El espacio entre secciones, porque debajo del título empieza la herramienta. */
+			text-align: center;
+		}
+
+		.ejemplo-texto-voz-contenedor { /* Divide formulario y resultados igual que la pagina ejemplo ia. */
+			align-items: flex-start;
+			display: flex;
+			gap: clamp(var(--espacio-2xl), 5vw, var(--espacio-3xl)); /* El espacio entre secciones, entre el formulario y los resultados, también cuando se apilan en el teléfono. */
+		}
+
+		.ejemplo-texto-voz-formulario { /* Mantiene los controles de prueba en una columna estrecha y estable. */
+			display: flex;
+			flex-direction: column;
+			flex-shrink: 0;
+			gap: var(--espacio-2xs);
+			width: 415px;
+		}
+
+		.ejemplo-texto-voz-formulario label { /* Replica la lectura compacta de etiquetas del formulario de ejemplo ia. */
+			font-weight: var(--peso-negrita);
+			margin-top: var(--espacio-xs);
+		}
+
+		.ejemplo-texto-voz-control { /* Da al texto de entrada una caja de edicion consistente con ejemplo ia. */
+			border: var(--borde-s) solid var(--color-borde-fuerte);
+			border-radius: var(--radio-s);
+			box-sizing: border-box;
+			font-family: inherit;
+			font-size: var(--texto-m);
+			min-height: 150px;
+			padding: var(--espacio-xs) var(--espacio-s);
+			resize: vertical;
+			width: 100%;
+		}
+
+		.ejemplo-texto-voz-selector { /* Iguala los selectores al tamano y borde de los controles de ejemplo ia. */
+			border: var(--borde-s) solid var(--color-borde-fuerte);
+			border-radius: var(--radio-s);
+			box-sizing: border-box;
+			font-family: inherit;
+			font-size: var(--texto-m);
+			padding: var(--espacio-xs) var(--espacio-s);
+			width: 100%;
+		}
+
+		.ejemplo-texto-voz-numero { /* Da al campo numerico local el mismo peso visual que los selectores de la prueba. */
+			border: var(--borde-s) solid var(--color-borde-fuerte);
+			border-radius: var(--radio-s);
+			box-sizing: border-box;
+			font-family: inherit;
+			font-size: var(--texto-m);
+			padding: var(--espacio-xs) var(--espacio-s);
+			width: 100%;
+		}
+
+		.ejemplo-texto-voz-boton { /* Define el comando principal con la misma escala sobria de ejemplo ia. */
+			border-radius: var(--radio-s);
+			cursor: pointer;
+			font-family: inherit;
+			font-size: var(--texto-m);
+			margin-top: var(--espacio-m);
+		}
+
+		.ejemplo-texto-voz-boton:disabled { /* Muestra con el cursor que la consulta está activa. Se destiñe como todos los controles desactivados, con la opacidad de global.css. */
+			cursor: wait;
+		}
+
+		.ejemplo-texto-voz-panel { /* Ocupa el espacio restante con resultados y detalles tecnicos. */
+			flex: 1;
+			min-width: 0;
+		}
+
+		.ejemplo-texto-voz-estado { /* Muestra el estado de generacion con el bloque grande de ejemplo ia. */
+			align-items: center;
+			background: var(--color-fondo-secundario);
+			border: var(--borde-s) solid var(--color-borde);
+			border-radius: var(--radio-s);
+			display: none;
+			font-size: var(--texto-2xl);
+			font-weight: var(--peso-negrita);
+			justify-content: center;
+			margin-bottom: var(--espacio-s);
+			min-height: 220px;
+			padding: var(--espacio-xl);
+			text-align: center;
+		}
+
+		.ejemplo-texto-voz-estado[hidden] { /* Oculta el bloque de estado hasta que exista actividad. */
+			display: none;
+		}
+
+		.ejemplo-texto-voz-estado:not([hidden]) { /* Recupera el centrado visual cuando hay estado visible. */
+			display: flex;
+		}
+
+		.ejemplo-texto-voz-estado.es-error { /* Los errores pueden ser largos: se muestran completos, pequeños y con desplazamiento. */
+			align-items: flex-start;
+			font-size: var(--texto-s);
+			font-weight: var(--peso-normal);
+			justify-content: flex-start;
+			max-height: 70vh;
+			overflow: auto;
+			overflow-wrap: anywhere;
+			text-align: left;
+			white-space: pre-wrap;
+		}
+
+		.ejemplo-texto-voz-detalles { /* Presenta los datos tecnicos como salida cruda de diagnostico. */
+			background: var(--color-fondo-secundario);
+			border: var(--borde-s) solid var(--color-borde);
+			border-radius: var(--radio-s);
+			display: block;
+			font-family: inherit;
+			font-size: var(--texto-s);
+			margin: 0;
+			padding: var(--espacio-s) var(--espacio-m);
+			white-space: pre-wrap;
+		}
+
+		.ejemplo-texto-voz-detalles[hidden] { /* Oculta los detalles mientras no haya respuesta del servidor. */
+			display: none;
+		}
+
+		@media (max-width: 760px) {
+
+			.ejemplo-texto-voz { /* Reduce el acolchado para que la pagina quepa en movil. */
+				padding: var(--espacio-l);
+			}
+
+			.ejemplo-texto-voz-contenedor { /* Apila formulario y panel cuando no caben dos columnas. */
+				display: grid;
+			}
+
+			.ejemplo-texto-voz-formulario { /* Permite que el formulario use todo el ancho disponible en movil. */
+				width: 100%;
+			}
+
+			.ejemplo-texto-voz-estado { /* Baja la altura del estado para pantallas estrechas. */
+				font-size: var(--texto-l);
+				min-height: 150px;
+			}
+
+		}
+
+	}
+
+</style>
+
+<section class="ejemplo-texto-voz" trad>
+	<h1 class="ejemplo-texto-voz-titulo">{{ejemplo-texto-voz-titulo}}</h1>
+	<div class="ejemplo-texto-voz-contenedor">
+		<form class="ejemplo-texto-voz-formulario" method="post" action="/ejemplo-texto-a-voz">
+			<label for="modelo-texto-voz">Motor de voz</label>
+			<select id="modelo-texto-voz" class="ejemplo-texto-voz-selector" name="ModeloOConector">
+				<option value="melotts-in-cloudflare">melotts-in-cloudflare</option>
+				<option value="gemini-2.5-flash-lite-preview-tts-in-google-cloud">gemini-2.5-flash-lite-preview-tts-in-google-cloud</option>
+				<option value="gemini-2.5-flash-tts-in-google-cloud" selected>gemini-2.5-flash-tts-in-google-cloud</option>
+				<option value="gemini-3.1-flash-tts-in-google-cloud">gemini-3.1-flash-tts-in-google-cloud</option>
+				<option value="kokoro-82m-in-together">kokoro-82m-in-together</option>
+				<option value="kokoro-82m-in-deepinfra">kokoro-82m-in-deepinfra</option>
+			</select>
+
+			<label for="idioma-texto-voz">Idioma de lectura</label>
+			<select id="idioma-texto-voz" class="ejemplo-texto-voz-selector" name="Idioma">
+				<option value="en-US">en-US</option>
+				<option value="en-GB">en-GB</option>
+				<option value="es-MX">es-MX</option>
+				<option value="es-419" selected>es-419</option>
+				<option value="es-US">es-US</option>
+				<option value="es-ES">es-ES</option>
+			</select>
+
+			<label for="voz-texto-voz">Voz disponible</label>
+			<select id="voz-texto-voz" class="ejemplo-texto-voz-selector" name="Voz" required>
+				[[opciones-voces-texto-a-voz]]
+			</select>
+
+			<label for="velocidad-reproduccion-texto-voz">Velocidad de lectura</label>
+			<input id="velocidad-reproduccion-texto-voz" class="ejemplo-texto-voz-numero" type="number"
+				name="VelocidadReproduccion" min="0.25" max="4" step="0.05" value="1" required>
+
+			<div id="grupo-instrucciones-voz">
+				<label for="instrucciones-voz">Instrucciones para la voz</label>
+				<textarea id="instrucciones-voz" class="ejemplo-texto-voz-control"
+					name="InstruccionesVoz"></textarea>
+			</div>
+
+			<label for="texto-voz">Texto a narrar</label>
+			<textarea id="texto-voz" class="ejemplo-texto-voz-control" name="Texto" required>El aire fresco de la primavera acaricia el rostro mientras avanzo por estas colinas suaves, donde el verde intenso lo cubre todo. Una lluvia ligera acaba de cesar, despertando ese aroma profundo a tierra mojada y flores silvestres que inunda los sentidos. El sendero es amable, serpenteando entre lomas bajas que no exigen esfuerzo, sino contemplación. A cada paso, el sonido de las botas sobre la hierba húmeda marca un ritmo tranquilo, casi hipnótico. Todo el entorno respira una paz absoluta, un instante donde el silencio solo se rompe por el viento y la promesa de una tarde que se despeja lentamente entre las nubes.</textarea>
+			<button id="boton-texto-voz" class="ejemplo-texto-voz-boton" type="submit">{{ejemplo-texto-voz-boton}}</button>
+		</form>
+
+		<div class="ejemplo-texto-voz-panel">
+			<div id="estado-texto-voz" class="ejemplo-texto-voz-estado" hidden
+				data-etiqueta-generando="{{ejemplo-texto-voz-detalles-generando}}"
+				data-etiqueta-error="{{ejemplo-texto-voz-detalles-error}}"></div>
+			<pre id="detalles-texto-voz" class="ejemplo-texto-voz-detalles" aria-live="polite" hidden
+				data-etiqueta-titulo="{{ejemplo-texto-voz-detalles-titulo}}"
+				data-etiqueta-proveedor="Proveedor usado"
+				data-etiqueta-conector="Motor solicitado"
+				data-etiqueta-modelo="Modelo real"
+				data-etiqueta-idioma="Idioma usado"
+				data-etiqueta-voz="Voz usada"
+				data-etiqueta-velocidad="{{ejemplo-texto-voz-detalles-velocidad}}"
+				data-etiqueta-caracteres="{{ejemplo-texto-voz-detalles-caracteres}}"
+				data-etiqueta-duracion="{{ejemplo-texto-voz-detalles-duracion}}"
+				data-etiqueta-costo="{{ejemplo-texto-voz-detalles-costo}}"
+				data-etiqueta-inferencia="{{ejemplo-texto-voz-detalles-inferencia}}"
+				data-etiqueta-descarga="{{ejemplo-texto-voz-detalles-descarga}}"
+				data-etiqueta-total="{{ejemplo-texto-voz-detalles-total}}"
+				data-etiqueta-megabytes="{{ejemplo-texto-voz-detalles-megabytes}}"
+				data-etiqueta-tipo="{{ejemplo-texto-voz-detalles-tipo}}"></pre>
+		</div>
+	</div>
+</section>
+
+<script>
+(() => {
+	const formulario = document.querySelector('.ejemplo-texto-voz-formulario');
+	const detalles = document.getElementById('detalles-texto-voz');
+	const estado = document.getElementById('estado-texto-voz');
+	const boton = document.getElementById('boton-texto-voz');
+	const selectorModelo = document.getElementById('modelo-texto-voz');
+	const selectorVoz = document.getElementById('voz-texto-voz');
+	const grupoInstrucciones = document.getElementById('grupo-instrucciones-voz');
+	const instruccionesVoz = document.getElementById('instrucciones-voz');
+	if (!(formulario instanceof HTMLFormElement) || !(detalles instanceof HTMLElement)
+		|| !(estado instanceof HTMLElement) || !(boton instanceof HTMLButtonElement)
+		|| !(selectorModelo instanceof HTMLSelectElement) || !(selectorVoz instanceof HTMLSelectElement)
+		|| !(grupoInstrucciones instanceof HTMLElement) || !(instruccionesVoz instanceof HTMLTextAreaElement)) return;
+
+	const datoRequerido = (elemento, nombre) => {
+		const valor = elemento.dataset[nombre];
+		if (typeof valor !== 'string' || valor === '') throw new Error(`Falta data-${nombre}.`);
+		return valor;
+	};
+	const etiquetaDetalles = nombre => datoRequerido(detalles, nombre);
+	const etiquetaEstado = nombre => datoRequerido(estado, nombre);
+	const cabeceraRequerida = (respuesta, nombre) => {
+		const valor = respuesta.headers.get(nombre);
+		if (valor === null || valor === '') throw new Error(`Falta la cabecera ${nombre}.`);
+		return valor;
+	};
+	const cabeceraVoz = respuesta => {
+		const valor = respuesta.headers.get('x-voz-texto-a-voz');
+		return valor === null ? '' : valor;
+	};
+	const conectoresKokoro = new Set(['kokoro-82m-in-together', 'kokoro-82m-in-deepinfra']);
+	const opcionesVoz = [...selectorVoz.options];
+	const obtenerFamiliaModelo = modelo => {
+		if (conectoresKokoro.has(modelo)) return 'kokoro';
+		if (modelo.startsWith('gemini-')) return 'gemini';
+		return '';
+	};
+	const esGoogleCloud = modelo => modelo.endsWith('-in-google-cloud');
+	const mostrarEstado = texto => {
+		estado.hidden = false;
+		estado.textContent = texto;
+	};
+	const ocultarEstado = () => {
+		estado.hidden = true;
+		estado.textContent = '';
+	};
+	const mostrarDetalles = lineas => {
+		detalles.textContent = lineas.filter(Boolean).join('\n');
+		detalles.hidden = false;
+	};
+	const nombreArchivo = respuesta => {
+		const disposición = cabeceraRequerida(respuesta, 'content-disposition');
+		const coincidencia = disposición.match(/filename="([^"]+)"/);
+		if (!coincidencia) throw new Error('Content-Disposition no trae filename.');
+		return coincidencia[1];
+	};
+	const segundos = milisegundos => (Number(milisegundos) / 1000).toFixed(3);
+	const descargar = (blob, archivo) => {
+		const url = URL.createObjectURL(blob);
+		const enlace = document.createElement('a');
+		enlace.href = url;
+		enlace.download = archivo;
+		document.body.append(enlace);
+		enlace.click();
+		enlace.remove();
+		URL.revokeObjectURL(url);
+	};
+	const limpiarMensajeError = texto => {
+		const textoLimpio = texto.trim();
+		if (!textoLimpio) return '';
+		try {
+			const datos = JSON.parse(textoLimpio);
+			const mensajeJson = [datos.Mensaje, datos.message, datos.error, datos.Error]
+				.find(mensaje => typeof mensaje === 'string' && mensaje.trim() !== '');
+			if (typeof mensajeJson === 'string') return mensajeJson;
+		} catch {
+			// La respuesta puede venir como HTML de error.
+		}
+		if (textoLimpio.toLowerCase().startsWith('<!doctype') || textoLimpio.toLowerCase().startsWith('<html')) {
+			const documento = new DOMParser().parseFromString(textoLimpio, 'text/html');
+			const textoDocumento = documento.body?.textContent?.replace(/\s+/g, ' ').trim();
+			return typeof textoDocumento === 'string' ? textoDocumento : '';
+		}
+		return textoLimpio.replace(/\s+/g, ' ');
+	};
+	const sincronizarVozConModelo = () => {
+		const familiaModelo = obtenerFamiliaModelo(selectorModelo.value);
+		const valorAnterior = selectorVoz.value;
+		for (const opción of opcionesVoz) {
+			const visible = familiaModelo !== '' && opción.dataset.familia === familiaModelo;
+			opción.hidden = !visible;
+			opción.disabled = !visible;
+		}
+		selectorVoz.disabled = familiaModelo === '';
+		if (selectorVoz.disabled) {
+			selectorVoz.value = '';
+			return;
+		}
+		const vozAnteriorDisponible = opcionesVoz.some(opción => opción.value === valorAnterior && !opción.disabled);
+		if (vozAnteriorDisponible) {
+			selectorVoz.value = valorAnterior;
+			return;
+		}
+		selectorVoz.value = '';
+	};
+	const sincronizarInstruccionesConModelo = () => {
+		const visible = esGoogleCloud(selectorModelo.value);
+		grupoInstrucciones.hidden = !visible;
+		if (!visible) instruccionesVoz.value = '';
+	};
+
+	selectorModelo.addEventListener('change', sincronizarVozConModelo);
+	selectorModelo.addEventListener('change', sincronizarInstruccionesConModelo);
+	sincronizarVozConModelo();
+	sincronizarInstruccionesConModelo();
+
+	formulario.addEventListener('submit', async evento => {
+		evento.preventDefault();
+		detalles.hidden = true;
+		estado.classList.remove('es-error');
+		mostrarEstado(etiquetaEstado('etiquetaGenerando'));
+		boton.disabled = true;
+		const inicio = performance.now();
+		try {
+			const respuesta = await fetch(formulario.action, {
+				method: 'POST',
+				body: new FormData(formulario)
+			});
+			if (!respuesta.ok) {
+				const textoError = await respuesta.text();
+				const mensajeError = limpiarMensajeError(textoError);
+				throw new Error(mensajeError !== '' ? mensajeError : respuesta.statusText);
+			}
+			const inicioDescarga = performance.now();
+			const blob = await respuesta.blob();
+			const milisegundosDescarga = Math.max(1, Math.round(performance.now() - inicioDescarga));
+			const archivo = nombreArchivo(respuesta);
+			descargar(blob, archivo);
+			const milisegundosTotal = Math.max(1, Math.round(performance.now() - inicio));
+			const kilobytesArchivo = (blob.size / 1024).toFixed(2);
+			ocultarEstado();
+			mostrarDetalles([
+				'-- ' + etiquetaDetalles('etiquetaTitulo') + ' --',
+				etiquetaDetalles('etiquetaProveedor') + ': ' + cabeceraRequerida(respuesta, 'x-proveedor-texto-a-voz'),
+				etiquetaDetalles('etiquetaConector') + ': ' + cabeceraRequerida(respuesta, 'x-conector-texto-a-voz'),
+				etiquetaDetalles('etiquetaModelo') + ': ' + cabeceraRequerida(respuesta, 'x-modelo-texto-a-voz'),
+				etiquetaDetalles('etiquetaIdioma') + ': ' + cabeceraRequerida(respuesta, 'x-idioma-texto-a-voz'),
+				etiquetaDetalles('etiquetaVoz') + ': ' + cabeceraVoz(respuesta),
+				etiquetaDetalles('etiquetaVelocidad') + ': ' + cabeceraRequerida(respuesta, 'x-velocidad-reproduccion-texto-a-voz'),
+				etiquetaDetalles('etiquetaCaracteres') + ': ' + cabeceraRequerida(respuesta, 'x-caracteres-entrada'),
+				etiquetaDetalles('etiquetaDuracion') + ': ' + cabeceraRequerida(respuesta, 'x-duracion-audio-segundos'),
+				etiquetaDetalles('etiquetaCosto') + ': $' + cabeceraRequerida(respuesta, 'x-costo-dolares-texto-a-voz'),
+				etiquetaDetalles('etiquetaInferencia') + ': ' + segundos(cabeceraRequerida(respuesta, 'x-inferencia-milisegundos')),
+				etiquetaDetalles('etiquetaDescarga') + ': ' + segundos(milisegundosDescarga),
+				etiquetaDetalles('etiquetaTotal') + ': ' + segundos(milisegundosTotal),
+				etiquetaDetalles('etiquetaMegabytes') + ': ' + kilobytesArchivo,
+				etiquetaDetalles('etiquetaTipo') + ': ' + cabeceraRequerida(respuesta, 'content-type')
+			]);
+		} catch (error) {
+			detalles.hidden = true;
+			estado.classList.add('es-error');
+			mostrarEstado(`${etiquetaEstado('etiquetaError')}: ${error instanceof Error ? error.message : String(error)}`);
+		} finally {
+			boton.disabled = false;
+		}
+	});
+})();
+</script>

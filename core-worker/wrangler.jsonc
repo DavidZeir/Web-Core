@@ -1,0 +1,31 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json", // Leer más en https://developers.cloudflare.com/workers/wrangler/configuration.
+	"name": "core-worker",
+	"main": "src/inicio.ts", // Archivo de entrada del Worker.
+	"compatibility_date": "2026-03-10", // Fecha de compatibilidad. Indica la fecha a partir de la cual se garantiza que las APIs y comportamientos del entorno de ejecución no cambiarán. Es importante actualizar esta fecha periódicamente para aprovechar las mejoras y nuevas características del entorno de Cloudflare Workers. Leer más en https://developers.cloudflare.com/workers/wrangler/configuration/compatibility-date.
+	"compatibility_flags": ["enable_request_signal"], // Se activa enable_request_signal porque este Worker propaga request.signal para cancelar consultas de IA de punta a punta cuando el cliente cierra la conexión. La señal se combina con el timeout del conector, aborta fetch o flujos activos hacia OpenAI, Anthropic, Gemini y Cloudflare AI, y además evita intentar respaldos innecesarios. Sin este flag, esa cadena de cancelación quedaría inactiva y el Worker seguiría consumiendo CPU y cuota de proveedores de IA aunque el cliente ya no esté escuchando. Agregar nodejs_compat si se va a usar Node.
+	"observability": { "enabled": true }, // Sirve para tener métricas similares a appinsights de Azure.
+	"upload_source_maps": true, // Útil para la depuración (funciona como los archivos .pdb de .NET). Es seguro hacerlo en Cloudflare porque estos mapas de código nunca quedan accesibles para los usuarios. Se usan solo internamente.
+	// "placement": { "mode": "smart" }, // omitido = cerca del usuario. "smart" = optimización automática. "region", "host" o "hostname" = acerca el Worker a un servidor conocido. Leer más en https://developers.cloudflare.com/workers/configuration/placement. 
+	"assets": { "directory": "./static/", "binding": "RECURSOS" }, // Configura la carpeta de recursos estáticos que se pueden servir directamente desde el Worker. El binding RECURSOS se usará en el código para acceder a estos archivos.
+	"workers_dev": true, // Si está en falso desactiva la url *.workers.dev y solo usa el dominio propio configurado.
+	// "routes": [	{"pattern": "core.test", "custom_domain": true} ], // Configura el dominio personalizado para el Worker.
+	//"tail_consumers": [ { "service": "supervisorservicios-worker" } ], // Manda al Worker supervisor lo que pasó en cada ejecución: console.log, errores, excepciones, estado HTTP y tiempos. Útil para alertas y diagnóstico.
+	//"queues": { "producers": [{ "queue": "alertas-supervisor", "binding": "COLA_ALERTAS_SUPERVISOR" }] }, // Permite que este Worker envíe mensajes a la cola alertas-supervisor mediante env.COLA_ALERTAS_SUPERVISOR. El supervisor puede consumir esa cola para procesar alertas.
+	"build": { "command": "npm run build-assets", "watch_dir": [ "src", "static/css", "static/html", "static/js", "static/textos", "src-ui"] }, // Configura el comando de construcción que se ejecuta antes de desplegar el Worker y especifica los directorios que se deben observar para cambios durante el desarrollo local.
+	//"r2_buckets": [
+	//	{ "binding": "ARCHIVOS_PUBLICOS", "bucket_name": "[nombre]-publicos", "remote": true },
+	//	{ "binding": "ARCHIVOS_PRIVADOS", "bucket_name": "[nombre]-privados", "remote": true },
+	// 	{ "binding": "CORREOS_RECIBIDOS", "bucket_name": "[nombre]-correos-recibidos", "remote": true }
+	//],
+	"d1_databases": [{
+		"binding": "BASE_DE_DATOS", "database_name": "bd-core", "database_id": "id-bd-core",
+		"remote": true // Configura la base de datos D1 que se usará en el Worker. El binding BASE_DE_DATOS se usará en el código para acceder a esta base de datos. El database_id es un identificador único que se asigna a la base de datos en Cloudflare. La propiedad "remote": true indica que se usa la base de datos de producción en desarrollo local.
+	}],
+	"ratelimits": [
+		{ "name": "LIMITADOR_CORREO_ENLACE_MAGICO", "namespace_id": "999901", "simple": { "period": 60, "limit": 1 } }, // Limita a 1 el número de correos de enlace mágico que se pueden enviar por minuto. 60 segundos de periodo es un límite del plan gratis, para otros intervalos habría que usar el plan de pago que vale 20 USD al mes. El namespace_id agrupa el limitador en Cloudflare y debe ser único entre los ratelimits de todos los Workers de toda la cuenta de Cloudflare.
+		{ "name": "LIMITADOR_IP_ENLACE_MAGICO", "namespace_id": "999902", "simple": { "period": 60, "limit": 5 } } // Limita a 5 el número de correos de enlace mágico que se pueden enviar por minuto desde la misma IP. Se usa 5 peticiones máximas por minuto de la misma IP para ser más laxo que con el email. Por ejemplo, en el caso que varias personas de una misma familia u oficina quieran ingresar o el usuario quiera usar otro correo. El namespace_id agrupa el limitador en Cloudflare y debe ser único entre los ratelimits de todos los Workers de toda la cuenta de Cloudflare.
+	],
+	"triggers": { "crons": [ "0 3 * * *" ] }, // Configura una tarea programada (cron) que se ejecuta todos los días a las 3:00 AM UTC para hacer limpieza de la base de datos de las sesiones viejas, enlaces mágicos viejos, etc. Leer más en https://developers.cloudflare.com/workers/wrangler/configuration/triggers.
+	"ai": { "binding": "IA" } // Configura el binding para usar la API de IA de Cloudflare en el Worker.
+}

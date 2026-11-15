@@ -1,0 +1,17 @@
+{
+  "WatchedDirectories": [
+    "../core-worker/static/html",
+    "../core-worker/static/css"
+  ],
+  "ProjectRootPaths": [
+    "../core-worker"
+  ],
+  "WatchedExtensions": [ ".html", ".css" ],
+  "GlobalCssFileNames": [ "global.css" ],
+  "ExcludedDirectoryNames": [ "min" ],
+  "ExcludedFileNameParts": [ ".min.css", ".min.js" ],
+  "WriteUseScribeFiles": false,
+  "RebuildDelayMs": 500,
+  "HideAfterStart": false,
+  "Language": "en"
+}

@@ -1,0 +1,8 @@
+<div trad>
+	<h1>{{inicio-título}}</h1>
+	<p>{{inicio-mensaje}}</p>
+	[[detalles-desarrollo]]
+	<form method="post" action="/salir" hx-post="/salir" hx-target="#contenido" hx-select="main" hx-swap="innerHTML">
+		<button type="submit">{{autenticación-salir-botón}}</button>
+	</form>
+</div>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /salud
+Disallow: /ejemplo
+Disallow: /ejemplo-ia
+Disallow: /ejemplo-alerta
+Sitemap: https://core.test/sitemap.xml

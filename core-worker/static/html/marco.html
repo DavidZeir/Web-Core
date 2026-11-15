@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" trad>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light"> <!-- Necesario para que no parpadee negro temporalmente. -->
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <script src="/js/htmx.min.js" defer></script>
+    <script src="/min/global.js" defer></script>
+    <link rel="stylesheet" href="/min/global.css">
+    <style>
+
+        @layer semantica_local {
+            html[lang='es'] #enlace-cambiar-a-espanol,
+            html[lang='en'] #enlace-cambiar-a-ingles {
+                display: none;
+            }
+
+            html:not([data-tema='alternativo']) #enlace-tema-principal,
+            html[data-tema='alternativo'] #enlace-tema-alternativo { /* Solo se muestra el enlace al tema que no está activo. Pertenece a la capa local porque solo existe en el marco. */
+                display: none;
+            }
+
+            header, footer { /* El encabezado y el pie van de borde a borde con el color primario, y sus enlaces con el texto que se lee sobre él. Pertenece a la capa local porque solo existen en el marco. */
+                background: var(--color-primario);
+                color: var(--color-sobre-primario);
+                padding: var(--espacio-l);
+
+                & a {
+                    color: var(--color-sobre-primario);
+                }
+
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body style="display: flex; flex-direction: column; text-align: center;">
+
+    <header style="display: flex; align-items: center; justify-content: center; gap: var(--espacio-l); flex-wrap: wrap;">
+
+        <a href="/" style="display: flex; align-items: center; gap: var(--espacio-s); font-family: var(--fuente-destacada); font-size: var(--texto-2xl); font-weight: var(--peso-negrita); text-decoration: none;">
+            <img src="/img/logo.svg" alt="" style="width: 36px; height: auto;">
+            {{marco-titulo-principal}}
+        </a>
+
+        <nav style="display: flex; align-items: center; justify-content: center; gap: var(--espacio-l); flex-wrap: wrap;">
+
+            <a href="/entrar">{{autenticación-entrar-título}}</a>
+
+            <a id="enlace-cambiar-a-espanol" href="/cambiar-idioma/es?redirigir-a={{ruta-actual-codificada}}">
+                {{marco-boton-cambiar-a-espanol}}
+            </a>
+
+            <a id="enlace-cambiar-a-ingles" href="/cambiar-idioma/en?redirigir-a={{ruta-actual-codificada}}">
+                {{marco-boton-cambiar-a-ingles}}
+            </a>
+
+            <a id="enlace-tema-alternativo" href="/cambiar-tema/alternativo?redirigir-a={{ruta-actual-codificada}}" aria-label="{{marco-tema-alternativo}}" title="{{marco-tema-alternativo}}">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="display: block;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+            </a>
+
+            <a id="enlace-tema-principal" href="/cambiar-tema/principal?redirigir-a={{ruta-actual-codificada}}" aria-label="{{marco-tema-principal}}" title="{{marco-tema-principal}}">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display: block;"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+            </a>
+
+        </nav>
+
+    </header>
+
+    <main id="contenido" style="flex: 1; margin: var(--espacio-l) clamp(0px, 4vw, var(--espacio-3xl)); padding: var(--espacio-l);">
+
+    </main>
+
+    <footer style="font-size: 0.8em;">
+        <a href="https://softwaredrones.com/web-core">{{marco-hecho-con-web-core}}</a>
+    </footer>
+
+</body>
+
+</html>

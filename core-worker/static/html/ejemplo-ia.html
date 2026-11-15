@@ -1,0 +1,548 @@
+<style>
+
+	@layer semantica_local {
+
+		.ejemplo-ia { /* Contenedor principal de la pagina de ejemplo IA, con ancho maximo y tipografia monoespaciada para legibilidad de datos tecnicos. */
+			max-width: var(--ancho-contenido);
+			margin: 0 auto;
+			padding: var(--espacio-xl) var(--espacio-2xl);
+			font-family: var(--fuente-monoespaciada);
+			text-align: start;
+		}
+
+		.ejemplo-ia h1 { /* Titulo principal centrado con separacion inferior para destacar el nombre de la herramienta. */
+			text-align: center;
+			margin-bottom: clamp(var(--espacio-2xl), 5vw, var(--espacio-3xl)); /* El espacio entre secciones, porque debajo del título empieza la herramienta. */
+		}
+
+		#contenedor-ia { /* Disposicion flex horizontal que separa el formulario de controles del panel de resultados. */
+			display: flex;
+			align-items: flex-start;
+			gap: clamp(var(--espacio-2xl), 5vw, var(--espacio-3xl)); /* El espacio entre secciones, entre el formulario y los resultados. */
+		}
+
+		#form-ia { /* Columna izquierda de ancho fijo que agrupa todos los controles de entrada del formulario. */
+			display: flex;
+			flex-direction: column;
+			gap: var(--espacio-2xs);
+			width: 415px;
+			flex-shrink: 0;
+		}
+
+		#form-ia label { /* Etiquetas del formulario con peso visual destacado y espaciado superior para separar campos. */
+			font-weight: var(--peso-negrita);
+			margin-top: var(--espacio-xs);
+		}
+
+		#form-ia select,
+		#form-ia input[type='number'],
+		#form-ia input[type='text'],
+		#form-ia textarea { /* Campos de entrada del formulario con estilos consistentes de tamano, borde y espaciado interno. */
+			width: 100%;
+			box-sizing: border-box;
+			padding: var(--espacio-xs) var(--espacio-s);
+			font-size: var(--texto-m);
+			font-family: inherit;
+			border: var(--borde-s) solid var(--color-borde-fuerte);
+			border-radius: var(--radio-s);
+		}
+
+		#form-ia textarea { /* Areas de texto multilinea con altura minima y redimensionamiento vertical para mensajes largos. */
+			min-height: 90px;
+			resize: vertical;
+		}
+
+		.fila-slider { /* Fila flex que alinea horizontalmente un control deslizante con su etiqueta de valor numerico. */
+			display: flex;
+			align-items: center;
+			gap: var(--espacio-s);
+		}
+
+		.fila-slider input[type='range'] { /* Control deslizante que ocupa el espacio disponible dentro de su fila contenedora. */
+			flex: 1;
+		}
+
+		.fila-slider span { /* Etiqueta de valor numerico del slider con ancho minimo y alineacion a la derecha. */
+			min-width: 20px;
+			text-align: right;
+		}
+
+		.activador-busqueda-web { /* Mantiene el texto y la casilla de busqueda en una sola linea dentro de la segunda columna. */
+			align-items: center;
+			display: flex;
+			gap: var(--espacio-s);
+			margin-top: 0;
+		}
+
+		.celda-busqueda-web { /* Centra verticalmente el activador web respecto a todo el bloque vecino de temperatura. */
+			align-items: center;
+			align-self: stretch;
+			display: flex;
+			flex: 1;
+		}
+
+		.opciones-busqueda-web { /* Agrupa los controles web que se revelan juntos antes de la configuracion de respaldo. */
+			align-items: center;
+			display: flex;
+			gap: var(--espacio-s);
+			justify-content: space-between;
+		}
+
+		.opciones-busqueda-web[hidden] { /* Retira por completo los controles web mientras su casilla permanece desactivada. */
+			display: none;
+		}
+
+		.fila-opcion-busqueda-web { /* Mantiene junta cada etiqueta con su control y separa visualmente las tres opciones web. */
+			align-items: center;
+			display: flex;
+			gap: var(--espacio-3xs);
+			white-space: nowrap;
+		}
+
+		#form-ia .fila-opcion-busqueda-web label { /* Elimina el margen vertical heredado para centrar las etiquetas dentro de cada fila. */
+			margin-top: 0;
+		}
+
+		.fila-respaldo { /* Comprime toda la configuracion opcional de respaldo en una sola linea del formulario. */
+			align-items: center;
+			display: grid;
+			gap: var(--espacio-xs);
+			grid-template-columns: auto minmax(0, 1fr) auto 3.5rem;
+			margin-top: var(--espacio-xl);
+		}
+
+		#form-ia .fila-respaldo label { /* Evita que las etiquetas compactas hereden el margen vertical de los campos normales. */
+			margin-top: 0;
+			white-space: nowrap;
+		}
+
+		#form-ia .fila-respaldo select:last-child { /* Reduce el relleno del selector numerico para que conserve su ancho minimo. */
+			padding-inline: var(--espacio-3xs);
+		}
+
+		#boton-ia,
+		#boton-ia-protegido { /* Botones de accion principal del formulario con tamano y espaciado uniformes para consistencia visual. */
+			margin-top: var(--espacio-m);
+			font-size: var(--texto-m);
+			font-family: inherit;
+			cursor: pointer;
+			border-radius: var(--radio-s);
+		}
+
+		#estado-ia { /* Panel de estado de procesamiento, oculto por defecto, que muestra mensaje centrado mientras se espera la respuesta. */
+			min-height: 220px;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: var(--espacio-xl);
+			text-align: center;
+			font-size: var(--texto-2xl);
+			font-weight: var(--peso-negrita);
+			background: var(--color-fondo-secundario);
+			border: var(--borde-s) solid var(--color-borde);
+			border-radius: var(--radio-s);
+			margin-bottom: var(--espacio-s);
+		}
+
+		#panel-resultado-ia { /* Contenedor flexible del area de resultados que ocupa el espacio restante junto al formulario. */
+			flex: 1;
+			min-width: 0;
+		}
+
+		#resultado-ia { /* Area de salida principal que muestra la respuesta de la consulta IA con formato de texto preformateado. */
+			display: none;
+			white-space: pre-wrap;
+			background: var(--color-fondo-secundario);
+			padding: var(--espacio-m);
+			border-radius: var(--radio-s);
+			font-size: var(--texto-m);
+			border: var(--borde-s) solid var(--color-borde);
+		}
+
+		#detalles-ia { /* Panel secundario que muestra informacion tecnica detallada de la consulta realizada y su resolucion. */
+			display: none;
+			white-space: pre-wrap;
+			background: var(--color-fondo-secundario);
+			padding: var(--espacio-s) var(--espacio-m);
+			border-radius: var(--radio-s);
+			font-size: var(--texto-s);
+			border: var(--borde-s) solid var(--color-borde);
+			margin-top: var(--espacio-s);
+		}
+
+	}
+
+</style>
+
+<section class="ejemplo-ia">
+
+	<h1>Ejemplo IA</h1>
+	<div id='contenedor-ia'>
+	<form id='form-ia'>
+		<label for='conector-ia'>Modelo o conector</label>
+			<select id='conector-ia' name='modelOrConnector'>
+				[[opciones-modelos-ia]]
+			</select>
+		<label for='sistema-ia'>Mensaje de sistema</label>
+		<textarea id='sistema-ia' name='systemMessage'>Eres muy displicente, seco y grosero. Regañas ligeramente al usuario por hacer preguntas estúpidas.</textarea>
+		<label for='mensaje-ia'>Mensaje</label>
+		<textarea id='mensaje-ia' name='userMessage' required>Hola, dame una idea.</textarea>
+		<div style='display:flex;align-items:center;justify-content:space-between;gap:var(--espacio-s)'>
+			<label for='maximos-tokens-ia' style='white-space:nowrap;margin:0'>Máximos tókenes respuesta</label>
+			<input id='maximos-tokens-ia' name='maximumTokens' type='number' value='2000' required style='width:100px;flex-shrink:0'>
+		</div>
+		<div style='display:flex;align-items:center;justify-content:space-between;gap:var(--espacio-s)'>
+			<label for='timeout-ia' style='white-space:nowrap;margin:0'>Segundos máximos por conector</label>
+			<input id='timeout-ia' name='timeoutSeconds' type='number' value='60' min='1' max='300' required style='width:100px;flex-shrink:0'>
+		</div>
+		<div class='fila-slider' style='margin-top:var(--espacio-m)'>
+			<div style='flex:1'>
+				<label for='razonamiento-ia'>Razonamiento</label>
+				<div class='fila-slider'>
+					<input id='razonamiento-ia' name='reasoning' type='range' min='1' max='5' value='3'>
+					<span id='razonamiento-valor-ia'>3</span>
+				</div>
+			</div>
+			<div style='flex:1'>
+				<label for='verbosidad-ia'>Verbosidad</label>
+				<div class='fila-slider'>
+					<input id='verbosidad-ia' name='verbosity' type='range' min='1' max='5' value='3'>
+					<span id='verbosidad-valor-ia'>3</span>
+				</div>
+			</div>
+		</div>
+		<div class='fila-slider'>
+			<div style='flex:1'>
+				<label for='temperatura-ia'>Temperatura</label>
+				<div class='fila-slider'>
+					<input id='temperatura-ia' name='temperature' type='range' min='0' max='20' value='10'>
+					<span id='temperatura-valor-ia'>1.0</span>
+				</div>
+			</div>
+			<div class='celda-busqueda-web'>
+				<label class='activador-busqueda-web' for='busqueda-web-ia'>
+					<span>Búsqueda web</span>
+					<input id='busqueda-web-ia' name='busquedaWeb' type='checkbox'
+						aria-controls='opciones-busqueda-web-ia' aria-expanded='false'>
+				</label>
+			</div>
+		</div>
+		<div id='opciones-busqueda-web-ia' class='opciones-busqueda-web' hidden>
+			<div class='fila-opcion-busqueda-web'>
+				<label for='proveedor-busqueda-web-ia'>Proveedor</label>
+				<select id='proveedor-busqueda-web-ia' name='proveedorBusquedaWeb'>
+					<option value='OpenAI' selected>OpenAI</option>
+					<option value='Parallel'>Parallel</option>
+				</select>
+			</div>
+			<div class='fila-opcion-busqueda-web'>
+				<label for='extension-busqueda-web-ia'>Extensión</label>
+				<select id='extension-busqueda-web-ia' name='extensionBusquedaWeb' style='width:5.5rem'>
+					<option value='Baja'>Baja</option>
+					<option value='Media' selected>Media</option>
+					<option value='Alta'>Alta</option>
+				</select>
+			</div>
+			<div class='fila-opcion-busqueda-web'>
+				<label for='forzar-busqueda-web-ia'>Forzar</label>
+				<input id='forzar-busqueda-web-ia' name='forzarBusquedaWeb' type='checkbox'>
+			</div>
+			<div class='fila-opcion-busqueda-web'>
+				<label for='pais-busqueda-web-ia'>País</label>
+				<input id='pais-busqueda-web-ia' name='paisBusquedaWeb' type='text' maxlength='2' placeholder='CO' style='width:3rem'
+					aria-label='País de la búsqueda web, código ISO de dos letras' autocomplete='country'>
+			</div>
+		</div>
+		<div class='fila-respaldo'>
+			<label for='respaldo-ia'>Respaldo</label>
+			<select id='respaldo-ia' name='modelOrConnectorFallback'>
+				<option value='' selected>(ninguno)</option>
+				<option value='__automatico__'>(automático)</option>
+				[[opciones-modelos-ia]]
+			</select>
+			<label for='razonamiento-respaldo-ia'>R</label>
+			<select id='razonamiento-respaldo-ia' name='reasoningFallback' aria-label='Razonamiento del respaldo' disabled>
+				<option value='1'>1</option>
+				<option value='2'>2</option>
+				<option value='3' selected>3</option>
+				<option value='4'>4</option>
+				<option value='5'>5</option>
+			</select>
+		</div>
+		<div style='display:flex;gap:var(--espacio-xs)'>
+			<button id='boton-ia' type='submit'>Consultar</button>
+			<button id='boton-ia-protegido' type='button'>Consultar protegido</button>
+		</div>
+		</form>
+        <div id='panel-resultado-ia'>
+            <div id='estado-ia'>Procesando...</div>
+				<pre id='resultado-ia'></pre>
+				<pre id='detalles-ia'></pre>
+			</div>
+	</div>
+	<script>
+
+		// Ejemplo minimalista de consumo del Modo Directo: una sola petición fetch que devuelve {tipo, texto}.
+		let controladorCancelacion = null; // Guarda el AbortController activo para poder cancelarlo desde el botón.
+		let cancelacionSolicitada = false;
+		let solicitudActiva = false;
+		const activadorBúsquedaWeb = document.getElementById('busqueda-web-ia');
+		const opcionesBúsquedaWeb = document.getElementById('opciones-busqueda-web-ia');
+		const selectorRespaldo = document.getElementById('respaldo-ia');
+		const selectorRazonamientoRespaldo = document.getElementById('razonamiento-respaldo-ia');
+		function actualizarVisibilidadBúsquedaWeb() {
+			const estáActiva = activadorBúsquedaWeb.checked;
+			opcionesBúsquedaWeb.hidden = !estáActiva;
+			activadorBúsquedaWeb.setAttribute('aria-expanded', String(estáActiva));
+			opcionesBúsquedaWeb.querySelectorAll('select, input').forEach(control => control.disabled = !estáActiva);
+			document.getElementById('pais-busqueda-web-ia').required = estáActiva;
+		}
+		function actualizarEstadoRespaldo() {
+			const respaldoSeleccionado = selectorRespaldo.value;
+			selectorRazonamientoRespaldo.disabled = respaldoSeleccionado === '' || respaldoSeleccionado === '__automatico__';
+		}
+		activadorBúsquedaWeb.addEventListener('change', actualizarVisibilidadBúsquedaWeb);
+		selectorRespaldo.addEventListener('change', actualizarEstadoRespaldo);
+		actualizarVisibilidadBúsquedaWeb();
+		actualizarEstadoRespaldo();
+
+		const registros = [[datos-registros-ia]];
+
+		function mostrarDetalles(modeloSolicitado, razonamiento, modeloRespaldo, razonamientoRespaldo,
+			selecciónRespaldo, conectorRespondió, hubóFallback) {
+			const modeloEfectivo = hubóFallback && modeloRespaldo ? modeloRespaldo : modeloSolicitado;
+			const razonamientoEfectivo = hubóFallback && modeloRespaldo ? (razonamientoRespaldo ?? razonamiento) : razonamiento;
+			const conector = conectorRespondió || registros.resolucion[modeloEfectivo];
+			const info = conector ? registros.conectores[conector] : null;
+			const textoRespaldo = selecciónRespaldo === '__automatico__' ? '(automático)' : (modeloRespaldo || '(ninguno)');
+			let pedido = '── Pedido ──';
+				pedido += '\nModelo:          ' + modeloSolicitado;
+				pedido += '\nRazonamiento:    ' + razonamiento;
+				pedido += '\nRespaldo:        ' + textoRespaldo;
+				pedido += '\nRazonamiento R.: ' + (modeloRespaldo ? (razonamientoRespaldo ?? razonamiento) : '—');
+				let resuelto = '── Resuelto ──';
+				if (conector && conector !== modeloEfectivo) resuelto += '\nConector:        ' + conector;
+				if (info) resuelto += '\nProveedor:       ' + info.proveedor + '\nModelo:          ' + info.modelo;
+				resuelto += '\nRazonamiento:    ' + razonamientoEfectivo;
+				detalles.innerHTML = '<div style="display:flex;gap:var(--espacio-3xl)"><pre style="margin:0">' + pedido + '</pre><pre style="margin:0">' + resuelto + '</pre></div>';
+			detalles.style.display = 'block';
+		}
+
+		document.getElementById('razonamiento-ia').addEventListener('input', function() { document.getElementById('razonamiento-valor-ia').textContent = this.value; });
+		document.getElementById('verbosidad-ia').addEventListener('input', function() { document.getElementById('verbosidad-valor-ia').textContent = this.value; });
+		document.getElementById('temperatura-ia').addEventListener('input', function() { document.getElementById('temperatura-valor-ia').textContent = (this.value / 10).toFixed(1); });
+
+		const formulario = document.getElementById('form-ia');
+		const boton = document.getElementById('boton-ia');
+		const botonProtegido = document.getElementById('boton-ia-protegido');
+		const estado = document.getElementById('estado-ia');
+		const resultado = document.getElementById('resultado-ia');
+		const detalles = document.getElementById('detalles-ia');
+
+		function mostrarResultado(texto) {
+			resultado.textContent = texto;
+			resultado.style.display = texto ? 'block' : 'none';
+		}
+
+		function iniciarEstadoProcesando() {
+			solicitudActiva = true;
+			cancelacionSolicitada = false;
+			mostrarResultado(''); // Limpiar respuesta anterior antes de mostrar el aviso.
+				detalles.style.display = 'none';
+					estado.style.display = 'flex';
+			boton.textContent = 'Cancelar';
+			botonProtegido.disabled = true;
+		}
+
+		function restaurarEstadoInicial() {
+			solicitudActiva = false;
+			estado.style.display = 'none';
+			boton.textContent = 'Consultar';
+			boton.disabled = false;
+			botonProtegido.disabled = false;
+			controladorCancelacion = null;
+		}
+
+		// Cuando el botón está en modo 'Cancelar', abortar la petición en curso.
+		boton.addEventListener('click', (evento) => {
+
+			if (solicitudActiva && controladorCancelacion) {
+				evento.preventDefault();
+				cancelacionSolicitada = true;
+				boton.disabled = true;
+				mostrarResultado('Cancelando...');
+				controladorCancelacion.abort();
+			}
+
+		});
+
+		botonProtegido.addEventListener('click', async () => {
+			if (solicitudActiva) return;
+			await enviarConsulta(true);
+		});
+
+			formulario.addEventListener('submit', async (evento) => {
+			evento.preventDefault();
+			if (solicitudActiva) return;
+			await enviarConsulta(false);
+
+		});
+
+		async function enviarConsulta(protegido) {
+
+			const controladorActual = new AbortController();
+			controladorCancelacion = controladorActual;
+			iniciarEstadoProcesando();
+
+			const datosFormulario = new FormData(formulario);
+			const cuerpoSolicitud = {
+				Modo: 'Directo',
+				ModeloOConector: datosFormulario.get('modelOrConnector'),
+				MensajeSistema: datosFormulario.get('systemMessage') || undefined,
+				MensajeUsuario: datosFormulario.get('userMessage'),
+				TókenesMáximos: parseInt(datosFormulario.get('maximumTokens'), 10),
+				SegundosMáximos: parseInt(datosFormulario.get('timeoutSeconds'), 10),
+				Razonamiento: parseInt(datosFormulario.get('reasoning'), 10),
+				Verbosidad: parseInt(datosFormulario.get('verbosity'), 10),
+				Temperatura: parseInt(datosFormulario.get('temperature'), 10) / 10,
+				Idioma: [[idioma-ejemplo-ia]]
+			};
+			if (datosFormulario.get('busquedaWeb') === 'on') {
+				cuerpoSolicitud.BúsquedaWeb = true;
+				cuerpoSolicitud.ProveedorBúsquedaWeb = datosFormulario.get('proveedorBusquedaWeb');
+				cuerpoSolicitud.ForzarBúsquedaWeb = datosFormulario.get('forzarBusquedaWeb') === 'on';
+				cuerpoSolicitud.ExtensiónBúsquedaWeb = datosFormulario.get('extensionBusquedaWeb');
+				const paísBúsquedaWeb = String(datosFormulario.get('paisBusquedaWeb') || '').trim();
+				if (paísBúsquedaWeb) cuerpoSolicitud.PaísBúsquedaWeb = paísBúsquedaWeb;
+			}
+
+			const selecciónRespaldo = String(datosFormulario.get('modelOrConnectorFallback') || '');
+			const modeloRespaldo = selecciónRespaldo !== '' && selecciónRespaldo !== '__automatico__' ? selecciónRespaldo : null;
+			const razonamientoRespaldo = datosFormulario.get('reasoningFallback');
+			if (modeloRespaldo) cuerpoSolicitud.RespaldoModeloOConector = modeloRespaldo;
+			if (modeloRespaldo && razonamientoRespaldo) cuerpoSolicitud.RespaldoRazonamiento = parseInt(razonamientoRespaldo, 10);
+			const urlConsulta = new URL('/ejemplo-ia', location.href);
+			if (protegido) urlConsulta.searchParams.set('protegido', 'true');
+			if (selecciónRespaldo === '') urlConsulta.searchParams.set('ignorarRespaldos', 'true');
+
+			try {
+
+				const respuestaServidor = await fetch(urlConsulta.toString(), {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify(cuerpoSolicitud),
+					signal: controladorActual.signal // Vincular la señal al fetch para que el Worker reciba el abort.
+				});
+
+				if (!respuestaServidor.ok) { // Verificar código HTTP antes de intentar parsear JSON.
+					const textoError = await respuestaServidor.text().catch(() => '(sin cuerpo)');
+					mostrarResultado('Error HTTP ' + respuestaServidor.status + ' ' + respuestaServidor.statusText + ':\n' + textoError);
+				} else {
+
+					let datosRespuesta;
+					try {
+						datosRespuesta = await respuestaServidor.json();
+					} catch (errorParseo) {
+						mostrarResultado('Error al parsear la respuesta JSON: ' + errorParseo.message);
+						return;
+					}
+
+					if (datosRespuesta.Tipo === 'Respuesta') {
+
+						const fms = ms => String(Math.round(ms)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u2009') + ' ms'; // Formatea milisegundos con separador de miles (espacio fino) para legibilidad.
+						let salida = datosRespuesta.Texto;
+						const u = datosRespuesta.UsoTókenes;
+						if (u) {
+							const totalEntrada = u.EntradaCaché + u.EntradaNoCaché + u.EscrituraCaché;
+							const totalSalida = u.SalidaRazonamiento + u.SalidaNoRazonamiento;
+							const fuenteRazonamiento = u.FuenteSalidaRazonamiento === 'Inferido' ? 'inferido' : 'proveedor';
+								salida += '\n\n── Tókenes ──'
+										+ '\nEntrada total:      ' + totalEntrada
+										+ '\n  Caché:            ' + u.EntradaCaché
+										+ '\n  Sin caché:        ' + u.EntradaNoCaché
+										+ '\n  Escritura caché:  ' + u.EscrituraCaché
+										+ '\nSalida total:       ' + totalSalida
+										+ '\n  Razonamiento:     ' + u.SalidaRazonamiento + ' (' + fuenteRazonamiento + ')'
+										+ '\n  Sin razonamiento: ' + u.SalidaNoRazonamiento;
+						}
+						if (datosRespuesta.InferenciaMilisegundos !== undefined) {
+							salida += '\n\n── Tiempo ──'
+									+ '\nConsulta:           ' + fms(datosRespuesta.InferenciaMilisegundos);
+						}
+						if (datosRespuesta.BúsquedasWeb !== undefined) {
+							salida += '\n\n── Búsquedas web ──'
+									+ '\nConsultas realizadas: ' + datosRespuesta.BúsquedasWeb;
+						}
+						if (datosRespuesta.CostoDólares !== undefined) {
+							const claveConectorCosto = datosRespuesta.ConectorEfectivo || registros.resolucion[cuerpoSolicitud.ModeloOConector];
+							const infoCosto = registros.conectores[claveConectorCosto];
+							const precios = infoCosto?.precios;
+							const usoCosto = datosRespuesta.UsoTókenesFacturables || datosRespuesta.UsoTókenes || {};
+							const convertirCosto = (tókenes, precio) => tókenes * precio / 1_000_000;
+							const formatoDólares = valor => '$' + valor.toFixed(8);
+							const costoEntrada = precios ? convertirCosto(usoCosto.EntradaNoCaché, precios.EntradaNoCaché) : 0;
+							const costoCaché = precios ? convertirCosto(usoCosto.EntradaCaché, precios.EntradaCaché) : 0;
+							const costoEscrituraCaché = precios ? convertirCosto(usoCosto.EscrituraCaché, precios.EscrituraCachéLargaDuración) : 0;
+							const costoRazonamiento = precios ? convertirCosto(usoCosto.SalidaRazonamiento, precios.SalidaRazonamiento) : 0;
+							const costoSalida = precios ? convertirCosto(usoCosto.SalidaNoRazonamiento, precios.SalidaNoRazonamiento) : 0;
+							const costoPorBúsqueda = registros.proveedoresBusquedaWeb[cuerpoSolicitud.ProveedorBúsquedaWeb]
+								?.CostoPorSolicitudDólares ?? 0;
+							const costoBúsquedasWeb = (datosRespuesta.BúsquedasWeb ?? 0) * costoPorBúsqueda;
+							salida += '\n\n── Costo en dólares ──'
+									+ '\nTotal:                  ' + formatoDólares(datosRespuesta.CostoDólares)
+									+ '\n  Entrada:              ' + formatoDólares(costoEntrada)
+									+ '\n  Caché:                ' + formatoDólares(costoCaché)
+									+ '\n  Escritura caché:      ' + formatoDólares(costoEscrituraCaché)
+									+ '\n  Razonamiento:         ' + formatoDólares(costoRazonamiento)
+									+ '\n  Salida:               ' + formatoDólares(costoSalida)
+									+ '\n  Búsquedas web:        ' + formatoDólares(costoBúsquedasWeb);
+						}
+						if (datosRespuesta.Errores?.length) { // Conectores que fallaron antes del exitoso: mostrar cada uno con su tiempo individual.
+							salida += '\n\n── Conectores fallidos antes del exitoso ──';
+							for (const e of datosRespuesta.Errores) {
+								const tiempoFallido = e.DuraciónMilisegundos !== undefined ? ' (' + fms(e.DuraciónMilisegundos) + ')' : '';
+								salida += '\n' + e.Fuente + tiempoFallido + ': ' + e.Error;
+							}
+						}
+						if (datosRespuesta.Citas?.length) {
+							salida += '\n\n── Citas ──';
+							for (const cita of datosRespuesta.Citas) {
+								salida += '\n' + (cita.Título || cita.URL) + ': ' + cita.URL;
+							}
+						}
+
+						mostrarResultado(salida);
+						mostrarDetalles(cuerpoSolicitud.ModeloOConector, cuerpoSolicitud.Razonamiento,
+							cuerpoSolicitud.RespaldoModeloOConector, cuerpoSolicitud.RespaldoRazonamiento,
+							selecciónRespaldo, datosRespuesta.ConectorEfectivo, !!(datosRespuesta.Errores?.length));
+
+					} else {
+
+						let mensajeError = 'Error del servidor: ' + datosRespuesta.Texto;
+						if (datosRespuesta.Errores?.length) {
+							mensajeError += '\n\n── Conectores fallidos ──';
+							for (const e of datosRespuesta.Errores)
+								mensajeError += '\n' + e.Fuente + ': ' + e.Error;
+						}
+						mostrarResultado(mensajeError);
+						mostrarDetalles(cuerpoSolicitud.ModeloOConector, cuerpoSolicitud.Razonamiento,
+							cuerpoSolicitud.RespaldoModeloOConector, cuerpoSolicitud.RespaldoRazonamiento,
+							selecciónRespaldo, undefined, false);
+
+					}
+				}
+
+			} catch (error) {
+
+				if (error.name === 'AbortError') {
+					if (cancelacionSolicitada)	mostrarResultado('Cancelado por el usuario.');
+				} else if (error.name !== 'AbortError') // Si no fue cancelación del usuario, mostrar el error real.
+					mostrarResultado('Error de red [' + error.name + ']: ' + error.message);
+
+			} finally {
+				if (controladorCancelacion === controladorActual)
+				restaurarEstadoInicial(); // Restaurar siempre al terminar, tanto por éxito como por error o cancelación.
+			}
+		}
+	</script>
+</section>

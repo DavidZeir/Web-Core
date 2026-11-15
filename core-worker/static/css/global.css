@@ -1,0 +1,261 @@
+@layer base, variables, semantica, utilidad, semantica_local, utilidad_local, excepciones;
+
+
+@layer base {
+
+	*, ::before, ::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		color-scheme: light; /* El esquema del tema principal, para que los navegadores en modo oscuro no alteren los colores del sitio. */
+		line-height: var(--interlineado-m);
+		-webkit-text-size-adjust: 100%;
+		tab-size: 4;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
+
+	body {
+		margin: 0;
+		min-height: 100vh;
+		min-height: 100dvh;
+	}
+
+	img, picture, video, canvas {
+		display: block;
+		max-width: 100%;
+	}
+
+	img, video, canvas {
+		height: auto;
+	}
+
+	h1, h2, h3, h4, p, figure, blockquote, dl, dd {
+		margin-block: 0;
+	}
+
+	button, input, optgroup, select, textarea {
+		font: inherit;
+		margin: 0;
+	}
+
+	code, kbd, pre, samp {
+		font-family: var(--fuente-monoespaciada);
+		font-size: 1em;
+	}
+
+}
+
+
+@layer variables {
+
+	:root { /* Los colores, las fuentes, los pesos, los tamaños de letra, el redondeado, los bordes, los espacios y las sombras del sitio se definen solo aquí, y npm run reglas rechaza los que se escriben a mano. Pertenece a la capa de variables porque son tokens de diseño compartidos. Se recomienda nombrar cada variable de manera general, y no por el uso que se le da en la interfaz, como botón o encabezado: tallas en los tamaños, los redondeados, los espacios y las sombras, suave y fuerte en los textos y los bordes, y luz y sombra en los colores de la marca. Así, el diseño decide dónde va cada una, y cambiar esa decisión no obliga a renombrar nada. Algunas no las usa ninguna página de Web Core, y se quedan para que todos los proyectos usen los mismos nombres. */
+		--color-primario: #195d59; /* La marca tiene tres colores, cada uno con su luz y su sombra. Los nombres dicen el tono y no dónde se usa, porque eso lo decide el diseño, como el color de un enlace con el puntero encima. */
+		--color-primario-luz: #7cc4bd;
+		--color-primario-sombra: #0f3e3b;
+		--color-sobre-primario: #fffdf9; /* El texto que se lee sobre cada color de marca. Lo decide la marca, y no cada regla, para que cambiar un color no obligue a tocar los botones. */
+		--color-secundario: #f2b544;
+		--color-secundario-luz: #f9dc9c;
+		--color-secundario-sombra: #7d5410;
+		--color-sobre-secundario: #1d2a2a;
+		--color-terciario: #d9603b;
+		--color-terciario-luz: #f5c4b1;
+		--color-terciario-sombra: #94391f;
+		--color-sobre-terciario: #1d2a2a;
+		--color-fondo: #f6f6f4;
+		--color-fondo-luz: #ffffff;
+		--color-fondo-sombra: #ebebe8;
+		--color-fondo-secundario: #f5f1e8;
+		--color-fondo-invertido: #1d2a2a; /* El fondo de lo que va con los colores invertidos, como un tooltip. */
+		--color-texto: #3d4a49;
+		--color-texto-fuerte: #1d2a2a; /* Se usa fuerte y suave como modificadores para los colores neutros sobre el fondo (-texto y -borde) porque en estos su característica principal es que tanto resaltan frente al fondo y -fuerte y -suave lo describen adecuadamente. */
+		--color-texto-suave: #626e6d;
+		--color-texto-invertido: #ebebe8;
+		--color-borde: #dcd5c7;
+		--color-borde-suave: #ece7dc;
+		--color-borde-fuerte: #b9b1a1;
+		--color-seleccion: #f4d293; /* El fondo del texto seleccionado: el secundario al 55 % sobre el fondo. Cambia con el tema, porque la mezcla depende del fondo. */
+		--color-exito: #2a7349; /* Los colores de estados no son de la marca en sí, pero si deberían estar armonizados con los colores de ella. Cada diseño puede decidir que tanto los usa. */
+		--color-exito-fondo: #e4f3ea;
+		--color-exito-borde: #87b39a;
+		--color-alerta: #bf5b00;
+		--color-alerta-fondo: #fbf0d9;
+		--color-alerta-borde: #dda66d;
+		--color-error: #c0392b;
+		--color-error-fondo: #fbe6e3;
+		--color-error-borde: #de9087;
+		--color-informacion: #2b6cb0;
+		--color-informacion-fondo: #e6f0fa;
+		--color-informacion-borde: #89aed5;
+		--fuente-destacada: Georgia, 'Times New Roman', serif; /* Las fuentes dicen qué son, y no dónde van: cada diseño decide cuál usa para qué. La destacada es para lo que se quiere resaltar, como los títulos que uno escoja. */
+		--fuente-normal: system-ui, sans-serif; /* Normalmente la de lectura, que también puede ir en un título. */
+		--fuente-monoespaciada: ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Liberation Mono', Menlo, monospace; /* Por lo general la del código, aunque un diseño puede usarla en otras cosas. */
+		--peso-normal: 400; /* Los pesos de la letra, con los nombres que usa la marca en sus estilos de texto. Cada fuente trae los suyos, así que cada proyecto pone los números que le sirven a la suya, como 600 en vez de 700 para la negrita. */
+		--peso-seminegrita: 600;
+		--peso-negrita: 700;
+		--interlineado-s: 1.2;
+		--interlineado-m: 1.5;
+		--interlineado-l: 1.7;
+		--texto-3xl: 3rem; /* La escala de tamaños, con más niveles arriba que abajo porque es donde más hacen falta. Dice solo el tamaño: cada diseño decide cuál usa para qué. */
+		--texto-2xl: 2rem;
+		--texto-xl: 1.5rem;
+		--texto-l: 1.25rem;
+		--texto-m: 1rem;
+		--texto-s: 0.87rem;
+		--texto-xs: 0.75rem;
+		--radio-s: 0.25rem; 
+		--radio-m: 0.5rem;
+		--radio-l: 0.75rem;
+		--radio-completo: 999px; /* Redondea del todo: en un elemento alargado da una píldora, y en uno cuadrado, un círculo. Es 999px, y no 50%, porque un porcentaje en un elemento alargado da una elipse. No cambia de una marca a otra, porque no tiene otro valor posible. No hay una variable para el redondeado de 0, porque significa sin redondeado y nunca vale otra cosa. Se escribe 0 directo, que se entiende solo y es más simple que una variable, y npm run reglas lo acepta. En cambio, el completo sí tiene nombre, porque 999px leído solo no dice qué es. */
+		--borde-s: 1px; /* Los grosores de los bordes y de los contornos, como el del foco, en tres tallas, para que los bordes de toda la web se vean del mismo grosor. Un estilo con bordes gruesos, como el neobrutalista, los sube aquí, y npm run reglas rechaza los que se escriben a mano. */
+		--borde-m: 2px;
+		--borde-l: 4px;
+		--espacio-3xs: 0.25rem; /* La escala de los espacios de padding, margin y gap, en múltiplos de 4 px. Dice solo el tamaño: cada diseño decide cuál va en cada caso. Va en rem, para que los espacios crezcan con la letra cuando el usuario la agranda en su navegador, como las fuentes. De m para arriba vale lo mismo que la escala de los textos, talla por talla. De s para abajo baja más que los textos, porque una letra más pequeña que texto-xs ya cuesta leerla, y un espacio pequeño sí sirve, como el de adentro de un botón. Si un proyecto cambia sus textos, los espacios no cambian con ellos, porque son dos escalas aparte. Entre los elementos de un contenedor flex o grid, el espacio va con gap en el contenedor, y no con un margen en cada elemento, para que solo quede entre ellos. En lo demás, como un título seguido de sus párrafos, va con margen abajo y a la derecha, para que el espacio se arme de arriba hacia abajo y de izquierda a derecha. Un ajuste fino le suma o le resta a una sola variable menos de lo que vale --espacio-3xs, con calc, y un espacio más pequeño que --espacio-3xs se escribe directo. Nada se multiplica ni se divide, salvo por -1 para un margen negativo. */
+		--espacio-2xs: 0.375rem;
+		--espacio-xs: 0.5rem;
+		--espacio-s: 0.75rem;
+		--espacio-m: 1rem;
+		--espacio-l: 1.25rem;
+		--espacio-xl: 1.5rem;
+		--espacio-2xl: 2rem; /* A partir de este punto #xl coincide con #rem para que sea fácil de recordar. */
+		--espacio-3xl: 3rem;
+		--color-sombra: rgb(0 0 0 / 14%); /* El color de las sombras: negro transparente, para que oscurezca lo que queda debajo sin teñirlo. En el tema oscuro lleva más opacidad, porque sobre un fondo oscuro una sombra suave no se ve. */
+		--sombra-s: 0 1px 2px var(--color-sombra); /* Las sombras de las cajas, en tres tallas según cuánto se levanta algo de la página: s para lo que sobresale poco, como una tarjeta, m para lo que flota, como un menú, y l para una ventana encima de la página. Van en px, porque no tienen que crecer con la letra. npm run reglas rechaza las que se escriben a mano. */
+		--sombra-m: 0 4px 12px var(--color-sombra);
+		--sombra-l: 0 12px 32px var(--color-sombra);
+		--opacidad-desactivado: 0.5; /* Qué tan desteñido se ve un control desactivado. Es la misma en todos, para que se reconozcan igual. */
+		--ancho-contenido: 70rem;
+	}
+
+	:root[data-tema='alternativo'] { /* El tema alternativo, que el usuario elige con el botón del encabezado. Por decisión, el sitio no sigue el modo del sistema del usuario: una marca se piensa en su tema principal, y al pasarla sola al otro modo por lo general pierde su esencia. Se llama alternativo, y no oscuro, porque depende de la marca: aquí el principal es claro, y por eso este es oscuro. Solo cambian los neutros, los estados y el color de las sombras, para que la marca se conserve igual en los dos temas, y cada proyecto puede ajustarlo. */
+		color-scheme: dark; /* No pone ningún color de la marca: le dice al navegador que dibuje oscuras sus propias partes, como las barras de desplazamiento y los controles de los formularios. CSS solo acepta light o dark, y este valor describe a este tema: si el principal de una marca fuera oscuro, aquí iría light. */
+		--color-fondo: #141a1a;
+		--color-fondo-luz: #2a3333;
+		--color-fondo-sombra: #0e1313;
+		--color-fondo-secundario: #1d2525;
+		--color-fondo-invertido: #f2f5f4;
+		--color-texto: #d3dbda;
+		--color-texto-fuerte: #f2f5f4;
+		--color-texto-suave: #9aa6a5;
+		--color-texto-invertido: #0e1313;
+		--color-borde: #343f3f;
+		--color-borde-suave: #263030;
+		--color-borde-fuerte: #4d5a5a;
+		--color-seleccion: #715b2c; /* El secundario al 42 % sobre el fondo oscuro. Al 55 %, como en el tema principal, la letra clara quedaría en 3,3 a 1, y así llega a 4,6. */
+		--color-exito: #6fce9a;
+		--color-exito-fondo: #16291f;
+		--color-exito-borde: #437c5d;
+		--color-alerta: #f0a859;
+		--color-alerta-fondo: #2e2211;
+		--color-alerta-borde: #8f6535;
+		--color-error: #f08b80;
+		--color-error-fondo: #321714;
+		--color-error-borde: #91514a;
+		--color-informacion: #7fb5ee;
+		--color-informacion-fondo: #14233a;
+		--color-informacion-borde: #4a6c94;
+		--color-sombra: rgb(0 0 0 / 45%);
+	}
+
+}
+
+
+@layer semantica {
+
+	body { /* Le da a toda la página el fondo, el color y la letra de la marca, y pertenece a la capa semántica porque es la identidad de un elemento nativo. El peso se declara, aunque el navegador ya use el normal, para que el texto siga a --peso-normal si una marca lo cambia. */
+		background: var(--color-fondo);
+		color: var(--color-texto);
+		font-family: var(--fuente-normal);
+		font-size: var(--texto-m);
+		font-weight: var(--peso-normal);
+	}
+
+	h1, h2, h3 { /* Distingue los títulos del texto con su letra, su peso y su color, y pertenece a la capa semántica porque son elementos nativos. El peso se declara, aunque el navegador ya ponga los títulos en negrita, para que sigan a --peso-negrita si una marca la cambia. */
+		color: var(--color-texto-fuerte);
+		font-family: var(--fuente-destacada);
+		font-weight: var(--peso-negrita);
+		line-height: var(--interlineado-s);
+		margin-bottom: var(--espacio-s); /* El espacio entre un título y su texto. Los componentes que reparten sus elementos con gap lo quitan, para no sumarlo al gap. */
+	}
+
+	h1 { /* El título de la página, y pertenece a la capa semántica porque es un elemento nativo. */
+		font-size: var(--texto-2xl);
+	}
+
+	h2 { /* Los títulos de sección, y pertenece a la capa semántica porque es un elemento nativo. */
+		font-size: var(--texto-xl);
+	}
+
+	h3 { /* Los subtítulos, y pertenece a la capa semántica porque es un elemento nativo. */
+		font-size: var(--texto-l);
+	}
+
+	p:not(:last-child) { /* El espacio entre párrafos, que también separa un párrafo de lo que le sigue, como un formulario. El último no lo lleva, para no sumar espacio al final de su contenedor, y los componentes que reparten sus líneas con gap lo quitan. Pertenece a la capa semántica porque es un elemento nativo. */
+		margin-bottom: var(--espacio-m);
+	}
+
+	b, strong { /* Las palabras resaltadas dentro de un texto, y pertenece a la capa semántica porque son elementos nativos. El navegador ya las pone en negrita, pero la suya no sigue a --peso-negrita si una marca la cambia. */
+		font-weight: var(--peso-negrita);
+	}
+
+	::selection { /* El texto seleccionado lleva el color de la marca, y no el azul del navegador, y pertenece a la capa semántica porque es parte de la identidad del sitio. La letra va fija en --color-texto porque, con solo el fondo, los textos más suaves quedarían con poco contraste. */
+		background: var(--color-seleccion);
+		color: var(--color-texto);
+	}
+
+	a { /* Los enlaces usan el color principal de la marca, y pertenece a la capa semántica porque es un elemento nativo. */
+		color: var(--color-primario);
+
+		&:hover { /* Cambia de tono con el puntero encima, porque la sombra del primario casi no se distingue de él. Cada proyecto decide en esta regla qué tono usa. */
+			color: var(--color-terciario-sombra);
+		}
+
+		[data-tema='alternativo'] & { /* El primario no se lee como texto sobre un fondo oscuro, y el secundario sí. */
+			color: var(--color-secundario);
+
+			&:hover {
+				color: var(--color-secundario-luz);
+			}
+
+		}
+
+	}
+
+	button { /* Los botones usan el color principal de la marca, con el texto del color de la página, y pertenece a la capa semántica porque es un elemento nativo. */
+		background: var(--color-primario);
+		border: none;
+		border-radius: var(--radio-m);
+		color: var(--color-sobre-primario);
+		cursor: pointer;
+		padding: var(--espacio-xs) var(--espacio-l);
+
+		&:hover { /* Se oscurece con el puntero encima. Cada proyecto decide en esta regla qué tono usa. */
+			background: var(--color-primario-sombra);
+		}
+
+	}
+
+	input:not([type='range'], [type='checkbox'], [type='radio']), select, textarea { /* Los campos llevan un borde marcado para verse como controles, y los deslizadores y las casillas se quedan como los dibuja el navegador. Pertenece a la capa semántica porque son elementos nativos. */
+		background: var(--color-fondo);
+		border: var(--borde-s) solid var(--color-borde-fuerte);
+		border-radius: var(--radio-m);
+		color: var(--color-texto);
+		padding: var(--espacio-xs) var(--espacio-s);
+	}
+
+	button:disabled, input:disabled, select:disabled, textarea:disabled { /* Un control deshabilitado conserva su color y se ve desteñido, para no confundirlo con un botón neutro, que está activo. Pertenece a la capa semántica porque son elementos nativos. */
+		cursor: not-allowed;
+		opacity: var(--opacidad-desactivado);
+	}
+
+	:focus-visible { /* El foco, que marca el control activo cuando se navega con el teclado, con un contorno del color terciario, que se distingue sobre el fondo de los dos temas. Por :focus-visible solo aparece con el teclado, y no al hacer clic, y se separa un poco del control para no confundirse con su borde. Cada proyecto decide en esta regla qué color usa. */
+		outline: var(--borde-m) solid var(--color-terciario);
+		outline-offset: 2px;
+	}
+
+}

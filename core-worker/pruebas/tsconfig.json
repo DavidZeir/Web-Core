@@ -1,0 +1,8 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"types": ["@cloudflare/vitest-pool-workers/types"] // Declara el módulo cloudflare:test, de donde las pruebas importan funciones como applyD1Migrations. Va con la subruta /types, porque el paquete sin ella no declara ese módulo.
+	},
+	"include": ["./**/*.ts", "../worker-configuration.d.ts", "../src/nucleo/ambiente.ts"], // ambiente.ts declara los .html que importa el código. El tsconfig.json principal lo incluye por estar en src, y aquí hay que nombrarlo porque ningún archivo lo importa.
+	"exclude": ["interfaz"] // Las pruebas de interfaz tienen su propio tsconfig.json, con los tipos de Node.
+}
