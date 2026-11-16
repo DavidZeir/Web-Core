@@ -10,7 +10,7 @@
 		"typecheck:pruebas": "tsc -p pruebas/tsconfig.json --noEmit && tsc -p pruebas/interfaz/tsconfig.json --noEmit",
 		"verificador": "node ../Programas/verificador.mjs",
 		"deploy": "npm run typecheck && npm run lint && npm run reglas && wrangler deploy",
-		"dev": "concurrently \"npm run dev:worker\" \"npm run dev:sync\"",
+		"dev": "node ../Programas/comprobar-claves.mjs && concurrently \"npm run dev:worker\" \"npm run dev:sync\"",
 		"use-scribe": "powershell -WindowStyle Hidden -Command \"$ruta = Resolve-Path '..\\USE Scribe\\USE Scribe.exe'; $carpeta = Split-Path $ruta; Start-Process -FilePath $ruta -WorkingDirectory $carpeta\"",
 		"start": "wrangler dev",
 		"test": "vitest",
