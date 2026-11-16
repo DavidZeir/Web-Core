@@ -3,6 +3,8 @@
  * valores propios de Core por los del proyecto nuevo, solo en los lugares que conoce y siempre con el elemento completo, como
  * "name": "core-worker" por "name": "nuevo-worker". Antes de escribir nada, revisa que cada elemento aparezca las veces que espera
  * y que en la copia no quede ningún valor de Core, y si algo no cuadra, se detiene sin crear nada. Nunca escribe en git ni instala nada.
+ * Solo funciona en Web Core Público, github.com/DavidZeir/Web-Core, o en un clon suyo: en la copia privada, donde se desarrolla
+ * Web Core con sus bases, se detiene.
  *
  * Se corre con todos los argumentos, por ejemplo:
  * node Programas/crear-proyecto.mts --destino "D:\Proyectos\Web Nuevo" --nombre nuevo --nombre-correcto "Nuevo" --dominio nuevo.com
@@ -20,9 +22,10 @@ type Archivo = { Origen: string; Destino: string; Contenido: Buffer | string; };
 
 const Plantilla = path.resolve(import.meta.dirname, '..'); // La carpeta de Web Core, un nivel arriba de Programas, la carpeta de este archivo.
 const EsteArchivo = path.relative(Plantilla, import.meta.filename).replaceAll(path.sep, '/'); // Su ruta desde la plantilla, con /, como la da git, para no copiarlo: los proyectos nuevos no necesitan el generador.
-const CopiadosAunqueGitLosIgnore = ['USE Scribe/USE Scribe.exe']; // git lo ignora porque es un programa, pero el proyecto nuevo lo necesita para npm run dev.
 const ValoresDeCore = ['core-worker', 'core-api', 'core.test', 'bd-core', 'id-bd-core', '999901', '999902']; // Ninguno puede quedar en la copia. El nombre visible, Web Core, no está, porque también aparece como referencia a la plantilla, como en el pie de página o en los comentarios.
 
+Exigir(!fs.existsSync(path.join(Plantilla, 'Bases')), // Los proyectos solo salen de la copia pública, que no trae la carpeta Bases, porque las bases son del desarrollo de Web Core y no de los proyectos que salen de él. La copia privada se reconoce por esa carpeta, y no por el nombre de la carpeta de la plantilla ni por su remoto, que cambian en cada computador y en cada clon.
+	'Esta es la copia privada de Web Core, donde se desarrolla con sus bases. Los proyectos se crean desde Web Core Público, github.com/DavidZeir/Web-Core, o desde un clon suyo.');
 const Valores = LeerValores(process.argv.slice(2));
 const Raíz = path.basename(Valores.Destino).toLowerCase().replace(/\s+/g, '-'); // El nombre del package.json de la raíz sale de la carpeta del proyecto, como web-pago-gratis de Web Pago Gratis.
 const Worker = `${Valores.Nombre}-worker`; // La carpeta del worker, que en Core es core-worker.
@@ -125,7 +128,7 @@ function PrepararArchivos(): Archivo[] { // Lee cada archivo que se copia y le a
 
 	const listados = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'],
 		{ cwd: Plantilla, encoding: 'utf8' }).split('\0'); // Lo que git guarda o no ignora, así que no se copian las claves, como .dev.vars, ni lo que se arma solo, como node_modules o .wrangler.
-	const rutas = [...new Set([...listados, ...CopiadosAunqueGitLosIgnore])].filter(ruta => ruta !== '' && ruta !== EsteArchivo
+	const rutas = [...new Set(listados)].filter(ruta => ruta !== '' && ruta !== EsteArchivo
 		&& !ruta.startsWith('Temporal/') && fs.existsSync(path.join(Plantilla, ruta))); // Sin los borrados que git todavía tiene en su índice, y sin Temporal/, por si la plantilla guarda ahí proyectos de ejemplo.
 	for (const ruta of Object.keys(Reemplazos))
 		if (!rutas.includes(ruta))
@@ -162,7 +165,7 @@ function RevisarQueNoQuedenValoresDeCore(archivos: Archivo[]): void { // Busca e
 	const restos: string[] = [];
 	for (const archivo of archivos) {
 
-		const esBinario = typeof archivo.Contenido !== 'string' && archivo.Contenido.includes(0); // Un archivo con un byte en cero es binario, como USE Scribe.exe o una imagen, y no se revisa.
+		const esBinario = typeof archivo.Contenido !== 'string' && archivo.Contenido.includes(0); // Un archivo con un byte en cero es binario, como una imagen, y no se revisa.
 		const texto = esBinario ? '' : archivo.Contenido.toString();
 		for (const valor of ValoresDeCore) if (texto.includes(valor)) restos.push(`${archivo.Origen}: ${valor}`);
 
